@@ -45,6 +45,18 @@ class UserController{
         }
     }
 
+    //Refresh Token
+    async refresh(request: Request, response: Response, next: NextFunction) {
+        const { refresh_token } = request.body;
+        try {
+            const result = await this.userServices.refresh(refresh_token)
+            return response.json(result);
+
+        } catch (error) {
+            next(error);
+        }
+    }
+
     // Atualizar usuário
     async update(request: Request, response: Response, next: NextFunction) {
         const { name, oldPassword, newPassword } = request.body;
@@ -60,6 +72,8 @@ class UserController{
             next(error);
         }
     }
+
+
 }
 
 export { UserController }

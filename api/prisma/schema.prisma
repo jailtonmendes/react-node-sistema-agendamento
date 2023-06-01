@@ -16,6 +16,7 @@ model User {
   password   String
   name       String
   avatar_url String @default("")
+  Schedule Schedule[]
 }
 
 model Schedule {
@@ -23,4 +24,6 @@ model Schedule {
   name  String
   phone String
   date  DateTime
+  user_id String @default("")
+  users User @relation(fields: [user_id], references: [id]) //Relacionando tabela User com Shedule
 }
