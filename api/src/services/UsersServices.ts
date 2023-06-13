@@ -111,10 +111,11 @@ class UsersServices {
 
         return {
             token,
-            refreshToken: refreshToken,
+            refresh_token: refreshToken,
             user: {
                 name: findUser.name,
                 email: findUser.email,
+                avatar_url: findUser.avatar_url,
             }
         }
 
@@ -126,19 +127,27 @@ class UsersServices {
             throw new Error("Refresh token missing");
         }
 
-        let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN;
+        let secretKeyRefresh: string | undefined = process.env.ACCESS_KEY_TOKEN_REFRESH;
+        if(!secretKeyRefresh) {
+            throw new Error("There is no refresh token key");
+        }
+
+        let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN_REFRESH;
         if(!secretKey) {
             throw new Error("There is no refresh token key");
         }
 
-        const verifyRefreshToken = verify(refresh_token, secretKey)
+        const verifyRefreshToken = verify(refresh_token, secretKey);
 
         const { sub } = verifyRefreshToken;
 
         const newToken = sign({sub}, secretKey, {
-            expiresIn: 60 * 15,
+            expiresIn: '1h',
         });
-        return newToken;
+        const refreshToken = sign({ sub }, secretKeyRefresh, {
+            expiresIn: '7d'
+        })
+        return { token: newToken, refresh_token: refreshToken};
     }
 }
 

@@ -8,14 +8,16 @@ import { Button } from '../../components/Button';
 import { Link } from 'react-router-dom';
 import { BsKey } from 'react-icons/bs';
 import { AiOutlineMail } from 'react-icons/ai';
+import { useAuth } from '../../hooks/auth';
 
 interface IFormValues {
-    email: String;
-    password: String;
+    email: string;
+    password: string;
 }
 
 export function Login() {
-
+    const {signin } = useAuth();
+    
     // Validação de campos - YUP
     const schema = yup.object().shape({
         email: yup.string().email('Digite um email válido').required("Campo de email obrigatório"),
@@ -24,8 +26,13 @@ export function Login() {
 
     const {register, handleSubmit, formState: {errors} } = useForm<IFormValues>({resolver: yupResolver(schema)})
 
-    const submit = handleSubmit((data) => {
-    console.log("🚀 ~ file: index.tsx:21 ~ submit ~ data:", data)
+    const submit = handleSubmit(async ({email, password}) => {
+        try {
+            signin({email, password});
+            
+        } catch (error) {
+            console.log("🚀 ~ file: index.tsx:34 ~ submit ~ error:", error)
+        }
 
     });
     
